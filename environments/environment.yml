@@ -1,0 +1,9 @@
+name: align-compare
+channels:
+  - conda-forge
+  - bioconda
+  - defaults
+dependencies:
+  - python=3
+  - mafft=7.508
+  - parasail-python=1.3.3
