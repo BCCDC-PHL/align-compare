@@ -34,8 +34,10 @@ def print_traceback_attributes(traceback):
 
 def main(args):
     seq_1 = parse_fasta(args.seq_1)
+    seq_1_length = len(seq_1['sequence'])
 
     seq_2 = parse_fasta(args.seq_2)
+    seq_2_length = len(seq_2['sequence'])
     
     result = parasail.nw_trace(seq_1['sequence'], seq_2['sequence'], args.gap_open, args.gap_extend, parasail.dnafull)
 
@@ -51,22 +53,31 @@ def main(args):
 
     alignment_length = len(traceback.ref)
     num_identical_positions = 0
+    num_aligned_positions = 0
     for i in range(alignment_length):
+        if traceback.query[i] == '-' or traceback.ref[i] == '-':
+            continue
         if traceback.query[i] == traceback.ref[i]:
             num_identical_positions += 1
+            num_aligned_positions += 1
+        else:
+            num_aligned_positions += 1
 
-    percent_identity = num_identical_positions / alignment_length * 100.0
+    percent_identity = num_identical_positions / num_aligned_positions * 100.0
 
     output_fieldnames = [
         'seq_1',
         'seq_2',
-        'percent_identity',
+        'seq_1_length',
+        'seq_2_length',
+        'aligned_length',
+        'percent_identity_of_aligned_segments',
     ]
 
     if args.identity_output is not None:
         with open(args.identity_output, 'w') as f:
             print(','.join(output_fieldnames), file=f)
-            print(','.join([seq_1['id'], seq_2['id'], "{:.2f}".format(percent_identity)]), file=f)
+            print(','.join([seq_1['id'], seq_2['id'], str(seq_1_length), str(seq_2_length), str(num_aligned_positions), "{:.2f}".format(percent_identity)]), file=f)
 
 
 if __name__ == '__main__':
