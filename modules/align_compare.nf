@@ -45,8 +45,9 @@ process parasail_nw_align {
       --seq-2 ${seq_2} \
       --gap-open ${params.gap_open_penalty} \
       --gap-extend ${params.gap_extend_penalty} \
-      --alignment-output ${sample_id}.aln.fa \
-      --identity-output ${sample_id}_alignment_identity.csv
+      > ${sample_id}.aln.fa
+
+    calculate_identity.py ${sample_id}.aln.fa > ${sample_id}_alignment_identity.csv
     """
 }
 

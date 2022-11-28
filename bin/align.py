@@ -25,13 +25,6 @@ def parse_fasta(fasta_path):
     return seq
 
 
-def print_traceback_attributes(traceback):
-    print(traceback.query)
-    print(traceback.comp)
-    print(traceback.ref)
-
-
-
 def main(args):
     seq_1 = parse_fasta(args.seq_1)
     seq_1_length = len(seq_1['sequence'])
@@ -43,41 +36,10 @@ def main(args):
 
     traceback = result.traceback
 
-    with open(args.alignment_output, 'w') as f:
-        print('>' + ' '.join([seq_1['id'], seq_1['description']]), file=f)
-        print(traceback.query, file=f)
-        print('>' + ' '.join([seq_2['id'], seq_1['description']]), file=f)
-        print(traceback.ref, file=f)
-
-    assert len(traceback.query) == len(traceback.ref)
-
-    alignment_length = len(traceback.ref)
-    num_identical_positions = 0
-    num_aligned_positions = 0
-    for i in range(alignment_length):
-        if traceback.query[i] == '-' or traceback.ref[i] == '-':
-            continue
-        if traceback.query[i] == traceback.ref[i]:
-            num_identical_positions += 1
-            num_aligned_positions += 1
-        else:
-            num_aligned_positions += 1
-
-    percent_identity = num_identical_positions / num_aligned_positions * 100.0
-
-    output_fieldnames = [
-        'seq_1',
-        'seq_2',
-        'seq_1_length',
-        'seq_2_length',
-        'aligned_length',
-        'percent_identity_of_aligned_segments',
-    ]
-
-    if args.identity_output is not None:
-        with open(args.identity_output, 'w') as f:
-            print(','.join(output_fieldnames), file=f)
-            print(','.join([seq_1['id'], seq_2['id'], str(seq_1_length), str(seq_2_length), str(num_aligned_positions), "{:.2f}".format(percent_identity)]), file=f)
+    print('>' + ' '.join([seq_1['id'], seq_1['description']]))
+    print(traceback.query)
+    print('>' + ' '.join([seq_2['id'], seq_1['description']]))
+    print(traceback.ref)
 
 
 if __name__ == '__main__':
@@ -86,8 +48,6 @@ if __name__ == '__main__':
     parser.add_argument('--seq-2')
     parser.add_argument('--gap-open', type=int, default=10)
     parser.add_argument('--gap-extend', type=int, default=1)
-    parser.add_argument('--alignment-output')
-    parser.add_argument('--identity-output')
     args = parser.parse_args()
 
     main(args)
